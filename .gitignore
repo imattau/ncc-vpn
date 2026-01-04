@@ -1,4 +1,7 @@
 node_modules/
 dist/
+<<<<<<< HEAD
 *.log
 .DS_Store
+=======
+>>>>>>> 5c9af38e21a51b25072647801661000320bb938c

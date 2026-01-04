@@ -1,5 +1,6 @@
 import { resolveServiceEndpoint } from 'ncc-06-js';
 import { SimplePool } from 'nostr-tools';
+import { NostrSigner } from 'ncc-05-js';
 
 export const DEFAULT_RELAYS = [
   'wss://relay.damus.io',
@@ -23,13 +24,16 @@ export async function resolveNpubService(npub: string, serviceId: string = 'api'
     torPreferred = true,
     allowedProtocols = ['wss', 'ws', 'https', 'http', 'tcp'],
     nsec = options.nsec || process.env.NSEC,
+    signer = options.signer,
     bootstrapRelays = DEFAULT_RELAYS
   } = options;
 
-  if (nsec) {
+  if (signer) {
+      console.log(`[Resolver] Using remote signer for resolution.`);
+  } else if (nsec) {
       console.log(`[Resolver] Using secret key for resolution (source: ${options.nsec ? 'options' : 'env'}).`);
   } else {
-      console.log(`[Resolver] No secret key provided. Private services will not be buildable.`);
+      console.log(`[Resolver] No secret key or signer provided. Private services will not be buildable.`);
   }
 
   // The NCC resolver expects a hex pubkey
@@ -48,7 +52,7 @@ export async function resolveNpubService(npub: string, serviceId: string = 'api'
     pool,
     torPreferred,
     allowedProtocols,
-    locatorSecretKey: nsec
+    locatorSecretKey: signer || nsec
   });
   if (!result.endpoint) {
     if (result.selection?.reason === 'private-no-decryption') {
