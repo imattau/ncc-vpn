@@ -1,0 +1,26 @@
+{
+  "name": "ncc-vpn",
+  "version": "0.2.0",
+  "description": "System-wide NCC Identity Resolver and Proxy",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node --no-warnings dist/index.js",
+    "dev": "tsc -w",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "ncc-02-js": "file:../ncc-02/ncc-02-js",
+    "ncc-05-js": "file:../ncc-05/ncc-05-js",
+    "ncc-06-js": "file:../ncc-06/ncc-06-js",
+    "nostr-tools": "^2.1.5",
+    "socks": "^2.8.3",
+    "ws": "^8.18.3",
+    "socks-proxy-agent": "^8.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.3.3"
+  }
+}
