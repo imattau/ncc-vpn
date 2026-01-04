@@ -7,7 +7,8 @@
 - **SOCKS5 Proxy Interface**: Works with standard applications (browsers, `curl`, etc.) by setting them to use `127.0.0.1:1080` as a proxy.
 - **Nostr Identity Resolution**: Automatically resolves hostnames like `npub1...`, `user.ncc`, or `user.nostr` to their active service endpoints.
 - **Onion Service Support**: Built-in integration with Tor. If a resolved endpoint is a `.onion` address, the proxy automatically routes the traffic through a local Tor daemon.
-- **Private Service Access**: Support for resolving private/encrypted service records when an authorized `NSEC` is provided.
+- **Private Service Access**: Support for resolving private/encrypted service records via a local `NSEC` or a **Remote Signer (Nip-46)**.
+- **Multi-User Support**: Multiple users can share a single proxy by providing their own Bunker URLs via SOCKS5 authentication.
 - **Zero Configuration Networking**: Connect to peers globally using only their Nostr identity.
 
 ## Prerequisites
@@ -57,6 +58,23 @@ curl --proxy socks5h://127.0.0.1:1080 http://npub1...some_npub... .ncc
 | Environment Variable | Description | Default |
 |----------------------|-------------|---------|
 | `NSEC`               | Secret key used to decrypt private service records. | None |
+| `BUNKER`             | Nostr Connect (NIP-46) bunker URL for remote signing. | None |
+| `PORT`               | Port for the SOCKS5 proxy to listen on. | 1080 |
+
+### Remote Signer (NIP-46)
+
+Instead of providing a raw `NSEC`, you can use a remote signer (like a mobile app or a Bunker). This keeps your private keys secure on your own device.
+
+**Global Signer**: Set the `BUNKER` environment variable before starting the proxy.
+```bash
+BUNKER="bunker://<pubkey>@<relay>?secret=<token>" npm start
+```
+
+**Per-Connection Signer**: If you are using a shared proxy, you can provide your Bunker URL as the **SOCKS5 username**. Most modern SOCKS5 clients support this.
+
+```bash
+curl --proxy-user "bunker://...:any-password" --proxy socks5h://127.0.0.1:1080 http://user.ncc
+```
 
 ## Development and Testing
 

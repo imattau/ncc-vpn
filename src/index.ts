@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 globalThis.WebSocket = WebSocket as any;
 
 import { startSocksServer } from './socks-server.js';
+import { createRemoteSigner } from './remote-signer.js';
 import * as net from 'net';
 
 async function checkTor() {
@@ -27,8 +28,23 @@ async function main() {
     console.log('[Info] Tor daemon detected.');
   }
 
-  const port = 1080;
-  startSocksServer(port);
+  let signer = null;
+  const bunkerUrl = process.env.BUNKER;
+  if (bunkerUrl) {
+    try {
+        console.log('[Info] Initializing Remote Signer (Bunker)...');
+        signer = await createRemoteSigner(bunkerUrl);
+        console.log('[Info] Remote Signer Ready.');
+    } catch (err: any) {
+        console.error(`[Error] Failed to initialize Remote Signer: ${err.message}`);
+    }
+  }
+
+  const port = parseInt(process.env.PORT || '1080');
+  startSocksServer(port, {
+      signer,
+      authorizedNsec: process.env.NSEC
+  });
 }
 
 main().catch(err => {
